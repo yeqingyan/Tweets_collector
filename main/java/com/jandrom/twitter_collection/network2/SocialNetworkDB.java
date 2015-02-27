@@ -164,8 +164,8 @@ public class SocialNetworkDB {
 	private Set<ObjectId> setFor(
 			String requestedBy) {
 
-       /* increase the size limit from 10 to 20 */
-       if (documentsCheckedOut.size() > 20) {
+       /* increase the size limit from 10 to 100 */
+       if (documentsCheckedOut.size() > 100) {
     	   System.out.println("documentsCheckedOut too big!");
     	   System.exit(1);
        }
