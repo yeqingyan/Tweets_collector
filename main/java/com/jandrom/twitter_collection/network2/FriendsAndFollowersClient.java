@@ -54,6 +54,13 @@ public class FriendsAndFollowersClient extends SocialNetworkClient {
 			idQueue.batchAddIds(ids.getIDs());
 
 			if (ids.hasNext()) {
+                // Mongodb don't allow a singer document bigger than 16MB
+                // If the accumulator size is bigger than 1000000, stop collection more data
+                if (accumulator.size() > 1000000) {
+                    System.out.println("User id "+ currentDoc.get("userid") + " have more than 1000000 followers ro friends, stop collecting.");
+                    add(accumulator);
+                    return reset(false);
+                }
 				currentIndex = ids.getNextCursor();
 				return null;
 			} else {

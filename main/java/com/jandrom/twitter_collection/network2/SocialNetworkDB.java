@@ -14,6 +14,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoException;
 
 public class SocialNetworkDB {
 
@@ -113,8 +114,30 @@ public class SocialNetworkDB {
 			setFor(requestedBy).remove(id);
 		}
 
-		collectionFor(collectionName).update(
-					new BasicDBObject("_id", id), document);
+        try {
+            collectionFor(collectionName).update(
+                    new BasicDBObject("_id", id), document);
+        } catch (MongoException e) {
+            System.out.println("Update error! Shouldn't run into this line. User id"+ document.get("userid"));
+            // The document is bigger than 16 MB, set status to 4, decide what to do next.
+            /*
+            document.put("friends_status", 4);
+            document.put("following_status", 4);
+            document.put("friends", new HashSet<>());
+            document.put("followers", new HashSet<>());
+            // reset the document to empty then try again, this should work
+
+            try {
+                collectionFor(collectionName).update(new BasicDBObject("_id", id), document);
+            } catch(MongoException ex) {
+                System.out.println("Update fail again!!");
+                System.out.println(ex);
+            }
+            */
+            System.out.println(e);
+
+
+        }
 	}
 	
 	public synchronized boolean contains(

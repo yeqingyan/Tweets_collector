@@ -78,7 +78,12 @@ public abstract class SocialNetworkClient implements Runnable {
 					if (id != insertDoc.get("_id")) {
 						System.out.println("\n\nname: Insert id != existing id.");
 					}
-					write(id, insertDoc); 
+                    try {
+                        write(id, insertDoc);
+                    } catch (Exception e) {
+                        // Write error, the document might too big
+                        System.out.println("\nWrite error. id is "+id);
+                    }
 				}
 				
 			} catch (Exception e) {
