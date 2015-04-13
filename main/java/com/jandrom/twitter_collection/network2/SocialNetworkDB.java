@@ -39,6 +39,7 @@ public class SocialNetworkDB {
 	}
 
 	/**
+	 * TODO: The implementation of this function is changed, the method used before consume too much memories. by Yeqing
 	 * Method guarantees that a document in the database is only checked out
 	 * once.
 	 * 
@@ -61,8 +62,14 @@ public class SocialNetworkDB {
 		Set<DBObject> docs = new HashSet<>();
 		Set<ObjectId> ids = setFor(requestedBy);
 		DBCollection collection = collectionFor(collectionName);
+
+		/* Modify begin by Yeqing,
+		only query count number of records.
 		Cursor cursor = collection.find(query).limit(
 				count * documentsCheckedOut.keySet().size());
+
+		Modify End */
+		Cursor cursor = collection.find(query).limit(count);
 
 		if (!cursor.hasNext()) {
             /* Add by Yeqing Yan Begin */
@@ -79,6 +86,22 @@ public class SocialNetworkDB {
 			if (!isDocumentCheckedOut(id)) {
 				ids.add(id);
 				docs.add(doc);
+				/* Add by Yeqing Begin at Apr 12
+				 * Change documents status to 4 after checkout */
+				// Status = 4 means this record is under querying
+				if (query.containsField("friends_status")) {
+					doc.put("friends_status", 4);
+				} else if (query.containsField("following_status")){
+					doc.put("following_status", 4);
+				} else {
+					System.out.println("Meet error, query object didn't contain friends_status or following_status");
+				}
+				collection.update(new BasicDBObject("_id", id), doc);
+				// debug info
+				if (i==1) {
+					System.out.println("Update id " + id + " to status 4");
+				}
+				/* Add by Yeqing End*/
 				i++;
 			}
 		}
