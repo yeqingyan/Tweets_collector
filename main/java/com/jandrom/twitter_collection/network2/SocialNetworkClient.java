@@ -44,6 +44,11 @@ public abstract class SocialNetworkClient implements Runnable {
 		this.readQuery = readQuery;
 		this.readCount = readCount;
 		this.rateLimit = rateLimit;
+		/* NOTE by Yeqing at Apr 13 Begin
+		   The start and end windows time setup too early,
+		   the query is not start yet, should after getDocument() function.
+		   Keep the initialization here, but the start and end will update after getDocuments()
+		   NOTE by Yeqing End*/
 		this.windowStart = System.currentTimeMillis();
 		this.windowEnd = windowStart + 1000 * 60 * 16; // 16 mins after start
 		this.numReq = 0;
@@ -67,7 +72,13 @@ public abstract class SocialNetworkClient implements Runnable {
 					sleep(60000);
 					continue;
 				}
-
+				/* NOTE by Yeqing at Apr 13 Begin
+				   After getDocument function finished
+				   Update start and end window here to avoid rate limit error
+				 */
+				this.windowStart = System.currentTimeMillis();
+				this.windowEnd = windowStart + 1000 * 60  * 16;
+                /* NOTE by Yeqing End*/
 				for (DBObject doc : currentDocs) {
 					DBObject insertDoc = null;
 					ObjectId id = (ObjectId) doc.get("_id");

@@ -97,10 +97,6 @@ public class SocialNetworkDB {
 					System.out.println("Meet error, query object didn't contain friends_status or following_status");
 				}
 				collection.update(new BasicDBObject("_id", id), doc);
-				// debug info
-				if (i==1) {
-					System.out.println("Update id " + id + " to status 4");
-				}
 				/* Add by Yeqing End*/
 				i++;
 			}
@@ -122,7 +118,10 @@ public class SocialNetworkDB {
 	 * @param document
 	 * @throws SocialNetworkException
 	 */
-	public synchronized void checkinDocument(
+	/* Modified by Yeqing Yan at Apr 14 Begin*/
+	/* Remove synchronized keywords here */
+	/* Modified by Yeqing Yan End*/
+	public void checkinDocument(
 			String requestedBy,
 			String collectionName,
 			ObjectId id, 
@@ -162,8 +161,11 @@ public class SocialNetworkDB {
 
         }
 	}
-	
-	public synchronized boolean contains(
+
+	/* Modified by Yeqing Yan at Apr 13.
+	* remove synchronized keyword to speed up id_queue processing time
+	* */
+	public boolean contains(
 			Long id, 
 			String fieldName, 
 			String collectionName) 
