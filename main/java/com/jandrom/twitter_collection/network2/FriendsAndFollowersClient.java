@@ -48,10 +48,32 @@ public class FriendsAndFollowersClient extends SocialNetworkClient {
 
 		try {
 			IDs ids = call();
-			for (long i : ids.getIDs()) {
+            // Modified by Yeqing Yan at APR 26 Begin
+            for (long i : ids.getIDs()) {
 				accumulator.add(i);
+                // Added by Yeqing Yan at APR 26
+                // Add id to database directly
+                if (idQueue.checkIdNotExist(i)) {
+                    idQueue.addId(i);
+                }
 			}
-			idQueue.batchAddIds(ids.getIDs());
+
+			/*
+			  Remove the code below, since idQueue only have one thread to add ids from id_queue into database, now we have 60 threads
+			  add ids to id_queue,  one thread is too slow, the linked queue will became so huge that it consume too much memory.
+
+			  Solution: each thread add ids to database directly. Though it might cause duplicated documents, but it only
+			  happened when threads want to insert the same user at the same time, since all the thread with check the user exist before
+			  doing the insert operation, it rarely happened. Therefore, this solution is acceptable.
+
+			  Note: There are better way to avoid duplicated documents, that is to make the id field in user_profiles collection to be unique,
+			  but mongodb didn't allow us to modified field attributed if the table already have duplicated data.
+
+			  // Remove below code
+			  idQueue.batchAddIds(ids.getIDs());
+			*/
+
+			//Modified by Yeqing Yan at APR 26 End
 
 			if (ids.hasNext()) {
                 // Mongodb don't allow a singer document bigger than 16MB

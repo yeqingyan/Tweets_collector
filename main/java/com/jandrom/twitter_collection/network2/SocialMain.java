@@ -26,7 +26,7 @@ public class SocialMain {
 	private static List<Thread> threads;
 
 	public static void main(String[] args) throws IOException, ParseException {
-		String file = args[0];//"/Users/alex/desktop/socnet.json";
+		String file = args[0];
 		Map<String, Twitter> twitters = getTwitters(file);
 		SocialNetworkDB db = new SocialNetworkDB();
 		IdQueue idQueue = new IdQueue(db);
@@ -65,10 +65,13 @@ public class SocialMain {
 			t2.start();
 			threads.add(t2);
 		}
-	
-		Thread idQueueThread = new Thread(idQueue);
-		idQueueThread.start();
-		
+
+		/* Modified by Yeqing Yan at Apr 26 Begin */
+		// Since threads will insert id into database by themselves, we do not need to start this thread.
+		// Thread idQueueThread = new Thread(idQueue);
+		// idQueueThread.start();
+		/* Modified by Yeqing Yan at Apr 26 End*/
+
 		while (!done()) {
 			try { Thread.sleep(30000); }
 			catch (InterruptedException ex) {}
@@ -77,11 +80,16 @@ public class SocialMain {
 		for (Thread t: threads) {
 			t.interrupt();
 		}
-		
-		while (idQueueThread.isAlive()) {
-			try { Thread.sleep(10000); }
-			catch (InterruptedException ex) {}
-		}
+
+		/* Modified by Yeqing Yan at Apr 26 Begin */
+		//
+		//while (idQueueThread.isAlive()) {
+		//try { Thread.sleep(10000); }
+		//catch (InterruptedException ex) {}
+		//}
+		//
+		/* Modified by Yeqing Yan at Apr 26 End */
+
 	}
 
 	

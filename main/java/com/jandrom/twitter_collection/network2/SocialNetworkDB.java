@@ -114,7 +114,6 @@ public class SocialNetworkDB {
 	 * @param requestedBy
 	 * @param collectionName
 	 * @param id
-	 * @param update
 	 * @param document
 	 * @throws SocialNetworkException
 	 */

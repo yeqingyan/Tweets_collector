@@ -1,25 +1,34 @@
 package com.jandrom.twitter_collection.network2;
 
-import java.net.UnknownHostException;
-import java.util.concurrent.ConcurrentLinkedDeque;
+//import java.net.UnknownHostException;
+//import java.util.concurrent.ConcurrentLinkedDeque;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.Cursor;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
+//import com.mongodb.Cursor;
+//import com.mongodb.DB;
+//import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
+//import com.mongodb.MongoClient;
 
-public class IdQueue implements Runnable{
+/* Modified by Yeqing Yan at Apr 26 */
+// This class donot need to be runnable any more.
+// public class IdQueue implements Runnable{
+public class IdQueue {
 
 	private SocialNetworkDB db;
-	private ConcurrentLinkedDeque<Long> ids;
+	/* Modified by Yeqing Yan at Apr 26 */
+	//private ConcurrentLinkedDeque<Long> ids;
 	
 	public IdQueue(SocialNetworkDB db) {
 		this.db = db;
-		this.ids = new ConcurrentLinkedDeque<>();
+		/* Modified by Yeqing Yan at Apr 26 */
+		//this.ids = new ConcurrentLinkedDeque<>();
 	}
 
+	/* Modified by Yeqing Yan at Apr 26 */
+	// Disable run function
+	// This class donot need to be runnable any more.
+	/*
 	@Override
 	public void run() {
 		Long currentId;
@@ -44,8 +53,11 @@ public class IdQueue implements Runnable{
 			ids.add(id);
 		}
 	}
-	
-	private void addId(Long id) {
+	*/
+
+	// Modified by Yeqing Yan at APR 26
+	// Change this function from private to public
+	public void addId(Long id) {
 		try {
 			db.writeDocument(buildIdQueueObject(id), 
 					SocialNetworkDB.ID_QUEUE);
@@ -60,8 +72,10 @@ public class IdQueue implements Runnable{
 		doc.put("done", 0);
 		return doc;
 	}
-	
-	private boolean checkIdNotExist(Long id) {
+
+	// Modified by Yeqing Yan at APR 26
+	// Change this function from private to public
+	public boolean checkIdNotExist(Long id) {
 		try {
 			return !db.contains(id, "id", SocialNetworkDB.ID_QUEUE) && 
 					!db.contains(id, "id",SocialNetworkDB.USERS);
@@ -72,7 +86,8 @@ public class IdQueue implements Runnable{
 			return false;
 		}
 	}
-	
+
+	/*
 	public static void main(String[] args) throws UnknownHostException {
 		MongoClient client = new MongoClient("localhost");
 		DB db = client.getDB("stream_store");
@@ -93,4 +108,5 @@ public class IdQueue implements Runnable{
 			}
 		}
 	}
+	*/
 }
