@@ -40,6 +40,8 @@ public class SocialNetworkDB {
 
 	/**
 	 * TODO: The implementation of this function is changed, the method used before consume too much memories. by Yeqing
+	 * Note: A document can not be checkout by Friends and Follower thread at the same time. Function isDocumentCheckOut will
+	 * return false in this condition.
 	 * Method guarantees that a document in the database is only checked out
 	 * once.
 	 * 
@@ -173,8 +175,9 @@ public class SocialNetworkDB {
 		return collectionFor(collectionName).
 				find(new BasicDBObject(fieldName, id)).count() > 0;
 	}
-	
-	public synchronized void  writeDocument(
+
+	/* Modified by Yeqing Yan remove the synchronized limit */
+	public void  writeDocument(
 			DBObject document,
 			String collectionName) 
 			throws SocialNetworkException {

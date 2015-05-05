@@ -68,8 +68,15 @@ public abstract class SocialNetworkClient implements Runnable {
 					done = true;
 					continue;
 				} else if (currentDocs.isEmpty()) {
-                    System.out.println("currentDocs is empty, sleep 16 min.");
-					sleep(60000);
+					/* Add by Yeqing Yan */
+					// Note this could rarely happened at the beginning of the program.
+					// Consider this scenario:
+					// Documents following_status=0 is checkout by Followers threads first.
+					// Then Friends thread can not checkout these documents at the same time.
+					// Because each document can only be checked out at once.
+					// So it is fine when some thread going to sleep at the first 15 minutes.
+                    System.out.println("currentDocs is empty, sleep 20 min.");
+					sleep(1000*60*20);
 					continue;
 				}
 				/* NOTE by Yeqing at Apr 13 Begin

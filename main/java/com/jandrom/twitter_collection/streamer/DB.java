@@ -48,8 +48,19 @@ public class DB {
 		}
 
 		List<DBObject> list = new ArrayList<>();
+        /* Modified by Yeqing Yan at Apr 27 Begin */
+        DBObject tweet_doc = null;
 		for (String json: tweetSet) {
-			list.add(makeDBObject(json));
+			/* Handle Limit notice message*/
+            tweet_doc = makeDBObject(json);
+            if (tweet_doc.containsField("limit") == true) {
+                System.out.println("Discard limit notice message: " + json);
+                continue;
+            } else {
+                list.add(tweet_doc);
+                //list.add(makeDBObject(json));
+            }
+            /* Modified by Yeqing Yan at Apr 27 End */
 		}
 		tweets.insert(list);
 	}
