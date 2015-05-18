@@ -91,6 +91,7 @@ public class FriendsAndFollowersClient extends SocialNetworkClient {
 			}
 		} catch (TwitterException e) {
 			// TODO Auto-generated catch block
+			System.out.println("User " + currentDoc.get("userid") + " got exception.");
 			log(e);
 			//e.printStackTrace();
 			return reset(true);

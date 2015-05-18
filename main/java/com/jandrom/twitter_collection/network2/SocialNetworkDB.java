@@ -66,12 +66,13 @@ public class SocialNetworkDB {
 		DBCollection collection = collectionFor(collectionName);
 
 		/* Modify begin by Yeqing,
-		only query count number of records.
+		only query count number of records. */
+		// Try re-enable the previous query. by Yeqing Yan at May 7
 		Cursor cursor = collection.find(query).limit(
 				count * documentsCheckedOut.keySet().size());
-
+		/*
 		Modify End */
-		Cursor cursor = collection.find(query).limit(count);
+		//Cursor cursor = collection.find(query).limit(count);
 
 		if (!cursor.hasNext()) {
             /* Add by Yeqing Yan Begin */
