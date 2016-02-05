@@ -52,14 +52,14 @@ public class DB {
                 DBObject tweet_doc = null;
                 for (String json: tweetSet) {
                         /* Handle Limit notice message*/
-                            tweet_doc = makeDBObject(json);
-                            if (tweet_doc.containsField("limit") == true) {
+                        tweet_doc = makeDBObject(json);
+                        if (tweet_doc.containsField("limit") == true) {
                                 System.out.println("Discard limit notice message: " + json);
                                 continue;
-                            } else {
+                        } else {
                                 list.add(tweet_doc);
                                 //list.add(makeDBObject(json));
-                            }
+                        }
                 /* Modified by Yeqing Yan at Apr 27 End */
                 }
                 tweets.insert(list);
