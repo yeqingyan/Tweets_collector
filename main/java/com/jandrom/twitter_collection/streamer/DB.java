@@ -17,60 +17,60 @@ import com.mongodb.MongoClient;
 
 public class DB {
 
-	private JSONParser parser;
-	private MongoClient mongo;
-	private DBCollection tweets;
-	private Set<String> tweetSet;
+        private JSONParser parser;
+        private MongoClient mongo;
+        private DBCollection tweets;
+        private Set<String> tweetSet;
 
-	public DB() throws UnknownHostException {
-		mongo = new MongoClient("localhost");
-		parser = new JSONParser();
-		tweets = mongo.getDB("stream_store").getCollection("tweets");
-		tweetSet = new HashSet<>();
-	}
+        public DB() throws UnknownHostException {
+                mongo = new MongoClient("localhost");
+                parser = new JSONParser();
+                tweets = mongo.getDB("stream_store").getCollection("tweets");
+                tweetSet = new HashSet<>();
+        }
 
-	public void close() {
-		batchWrite();
-		mongo.close();
-	}
+        public void close() {
+                batchWrite();
+                mongo.close();
+        }
 
-	public synchronized void writeStatus(String tweet) {
-		tweetSet.add(tweet);
-		if (tweetSet.size() > 100) {
-			batchWrite();
-			tweetSet.clear();
-		}
-	}
+        public synchronized void writeStatus(String tweet) {
+                tweetSet.add(tweet);
+                if (tweetSet.size() > 100) {
+                        batchWrite();
+                        tweetSet.clear();
+                }
+        }
 
-	private void batchWrite() {
-		if (tweetSet.isEmpty()) {
-			return;
-		}
+        private void batchWrite() {
+                if (tweetSet.isEmpty()) {
+                        return;
+                }
 
-		List<DBObject> list = new ArrayList<>();
-        /* Modified by Yeqing Yan at Apr 27 Begin */
-        DBObject tweet_doc = null;
-		for (String json: tweetSet) {
-			/* Handle Limit notice message*/
-            tweet_doc = makeDBObject(json);
-            if (tweet_doc.containsField("limit") == true) {
-                System.out.println("Discard limit notice message: " + json);
-                continue;
-            } else {
-                list.add(tweet_doc);
-                //list.add(makeDBObject(json));
-            }
-            /* Modified by Yeqing Yan at Apr 27 End */
-		}
-		tweets.insert(list);
-	}
+                List<DBObject> list = new ArrayList<>();
+                /* Modified by Yeqing Yan at Apr 27 Begin */
+                DBObject tweet_doc = null;
+                for (String json: tweetSet) {
+                        /* Handle Limit notice message*/
+                            tweet_doc = makeDBObject(json);
+                            if (tweet_doc.containsField("limit") == true) {
+                                System.out.println("Discard limit notice message: " + json);
+                                continue;
+                            } else {
+                                list.add(tweet_doc);
+                                //list.add(makeDBObject(json));
+                            }
+                    /* Modified by Yeqing Yan at Apr 27 End */
+                }
+                tweets.insert(list);
+        }
 
-	private DBObject makeDBObject(String json) {
-		try {
-			return new BasicDBObject((Map) parser.parse(json));
-		} catch (ParseException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+        private DBObject makeDBObject(String json) {
+                try {
+                        return new BasicDBObject((Map) parser.parse(json));
+                } catch (ParseException e) {
+                        e.printStackTrace();
+                        return null;
+                }
+        }
 }
